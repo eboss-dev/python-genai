@@ -447,6 +447,9 @@ def process_schema(
           'Default value is not supported in the response schema for the Gemmini API.'
       )
 
+  if schema.get('title') == 'PlaceholderLiteralEnum':
+    schema.pop('title', None)
+
   if defs is None:
     defs = schema.pop('$defs', {})
     for _, sub_schema in defs.items():

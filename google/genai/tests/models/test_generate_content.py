@@ -16,7 +16,7 @@
 import enum
 
 from pydantic import BaseModel, ValidationError
-from typing import Optional
+from typing import Literal, Optional
 import pytest
 import json
 import sys
@@ -587,6 +587,34 @@ def test_nested_list_of_int_schema(client):
       },
   )
   assert isinstance(response.parsed[0][0][0], int)
+
+
+def test_literal_schema(client):
+  response = client.models.generate_content(
+      model='gemini-1.5-flash',
+      contents='Which ice cream flavor should I order?',
+      config={
+          'response_mime_type': 'application/json',
+          'response_schema': Literal['chocolate', 'vanilla', 'cookie dough'],
+      },
+  )
+
+  allowed_values = ['chocolate', 'vanilla', 'cookie dough']
+  assert isinstance(response.parsed, Enum)
+  assert str(response.parsed.name) in allowed_values
+
+
+def test_literal_schema_with_non_string_types_raises(client):
+  with pytest.raises(ValueError) as e:
+    client.models.generate_content(
+        model='gemini-1.5-flash',
+        contents='Which ice cream flavor should I order?',
+        config={
+            'response_mime_type': 'application/json',
+            'response_schema': Literal['chocolate', 'vanilla', 1],
+        },
+    )
+  assert 'validation error' in str(e)
 
 
 @pytest.mark.skipif(
