@@ -206,6 +206,7 @@ def test_schema_with_default_value_raises_for_mldev(client):
         type='OBJECT',
         required=['name'],
         title='CountryInfoWithDefaultValue',
+        property_ordering=['name', 'population'],
     )
 
     assert transformed_schema_vertex == expected_schema_vertex
@@ -238,6 +239,7 @@ def test_schema_with_any_of_raises_for_mldev(client):
         type='OBJECT',
         required=['name', 'restaurants_per_capita'],
         title='CountryInfoWithAnyOf',
+        property_ordering=['name', 'restaurants_per_capita'],
     )
 
     assert transformed_schema_vertex == expected_schema_vertex

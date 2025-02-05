@@ -490,6 +490,9 @@ def process_schema(
         ref = defs[ref_key.split('defs/')[-1]]
         process_schema(ref, client, defs)
         properties[name] = ref
+    if len(properties.items()) > 1:
+      property_names = list(properties.keys())
+      schema['property_ordering'] = property_names
   elif schema_type == 'ARRAY':
     sub_schema = schema.get('items', None)
     if sub_schema is None:
