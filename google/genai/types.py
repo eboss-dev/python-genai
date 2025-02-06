@@ -22,7 +22,7 @@ import json
 import logging
 import sys
 import typing
-from typing import Any, Callable, GenericAlias, Literal, Optional, Type, TypedDict, Union
+from typing import Any, Callable, GenericAlias, List, Literal, Optional, Type, TypedDict, Union
 import pydantic
 from pydantic import Field
 from . import _common
@@ -688,6 +688,93 @@ class Content(_common.BaseModel):
       'model'. Useful to set for multi-turn conversations, otherwise can be
       left blank or unset. If role is not specified, SDK will determine the role.""",
   )
+
+
+class UserContent(Content):
+  """UserContent facilitates the creation of a Content object with a user role.
+
+  Example usages: - Create a user Content object with a string:
+
+    user_content = UserContent("Why is the sky blue?")
+  - Create a user Content object with a file data Part object:
+    user_content = UserContent(Part.from_uri(file_uril="gs://bucket/file.txt",
+    mime_type="text/plain"))
+  - Create a user Content object with byte data Part object:
+    user_content = UserContent(Part.from_bytes(data=b"Hello, World!",
+    mime_type="text/plain"))
+
+    You can create a user Content object using other classmethods in the Part
+    class as well.
+    You can also create a user Content using a list of Part objects or strings.
+  """
+
+  def __init__(self, part_union: Union[Part, str, List[Union[Part, str]]]):
+    if isinstance(part_union, Part):
+      parts = [part_union]
+    elif isinstance(part_union, str):
+      parts = [Part.from_text(text=part_union)]
+    elif isinstance(part_union, list):
+      if not part_union:
+        raise ValueError(
+            'UserContent must contain at least one Part or one string.'
+        )
+      parts = []
+      for part in part_union:
+        if isinstance(part, Part):
+          parts.append(part)
+        elif isinstance(part, str):
+          parts.append(Part.from_text(text=part))
+        else:
+          raise ValueError(f'Invalid part: {part} with part type: {type(part)}')
+    else:
+      raise ValueError(
+          f'Invalid part: {part_union} with part type: {type(part_union)}'
+      )
+
+    super().__init__(parts=parts, role='user')
+
+
+class ModelContent(Content):
+  """ModelContent facilitates the creation of a Content object with a model role.
+
+  Example usages: - Create a model Content object with a string:
+
+    model_content = ModelContent("Why is the sky blue?")
+  - Create a model Content object with a file data Part object:
+    model_content = ModelContent(Part.from_uri(file_uril="gs://bucket/file.txt",
+    mime_type="text/plain"))
+  - Create a model Content object with byte data Part object:
+    model_content = ModelContent(Part.from_bytes(data=b"Hello, World!",
+    mime_type="text/plain"))
+
+    You can create a model Content object using other classmethods in the Part
+    class as well.
+    You can also create a model Content using a list of Part objects or strings.
+  """
+
+  def __init__(self, part_union: Union[Part, str, List[Union[Part, str]]]):
+    if isinstance(part_union, Part):
+      parts = [part_union]
+    elif isinstance(part_union, str):
+      parts = [Part.from_text(text=part_union)]
+    elif isinstance(part_union, list):
+      if not part_union:
+        raise ValueError(
+            'ModelContent must contain at least one Part or one string.'
+        )
+      parts = []
+      for part in part_union:
+        if isinstance(part, Part):
+          parts.append(part)
+        elif isinstance(part, str):
+          parts.append(Part.from_text(text=part))
+        else:
+          raise ValueError(f'Invalid part: {part} with part type: {type(part)}')
+    else:
+      raise ValueError(
+          f'Invalid part: {part_union} with part type: {type(part_union)}'
+      )
+    super().__init__(parts=parts, role='model')
 
 
 class ContentDict(TypedDict, total=False):

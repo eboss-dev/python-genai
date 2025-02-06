@@ -991,7 +991,6 @@ def test_generic_alias_complex_array_with_default_value_not_compatible_all_py_ve
       )
 
 
-
 def test_generic_alias_object():
 
   def func_under_test(
@@ -2332,3 +2331,98 @@ def test_unknown_enum_value():
     enum_instance = types.Type('float')
     assert enum_instance.name == 'float'
     assert enum_instance.value == 'float'
+
+
+def test_model_content_list_part_from_uri():
+  expected_model_content = types.Content(
+      role='model',
+      parts=[
+          types.Part(text='what is this image about?'),
+          types.Part(
+              file_data=types.FileData(
+                  file_uri='gs://generativeai-downloads/images/scones.jpg',
+                  mime_type='image/jpeg',
+              )
+          ),
+      ],
+  )
+
+  actual_model_content = types.ModelContent([
+      'what is this image about?',
+      types.Part.from_uri(
+          file_uri='gs://generativeai-downloads/images/scones.jpg',
+          mime_type='image/jpeg',
+      ),
+  ])
+
+  assert expected_model_content.model_dump_json(
+      exclude_none=True
+  ) == actual_model_content.model_dump_json(exclude_none=True)
+
+
+def test_model_content_part_from_uri():
+  expected_model_content = types.Content(
+      role='model',
+      parts=[
+          types.Part(
+              file_data=types.FileData(
+                  file_uri='gs://generativeai-downloads/images/scones.jpg',
+                  mime_type='image/jpeg',
+              )
+          )
+      ],
+  )
+
+  actual_model_content = types.ModelContent(
+      types.Part.from_uri(
+          file_uri='gs://generativeai-downloads/images/scones.jpg',
+          mime_type='image/jpeg',
+      )
+  )
+
+  assert expected_model_content.model_dump_json(
+      exclude_none=True
+  ) == actual_model_content.model_dump_json(exclude_none=True)
+
+
+def test_model_content_from_string():
+  expected_model_content = types.Content(
+      role='model',
+      parts=[types.Part(text='why is the sky blue?')],
+  )
+
+  actual_model_content = types.ModelContent('why is the sky blue?')
+
+  assert expected_model_content.model_dump_json(
+      exclude_none=True
+  ) == actual_model_content.model_dump_json(exclude_none=True)
+
+
+def test_model_content_unsupported_type():
+  with pytest.raises(ValueError):
+    types.ModelContent(123)
+
+
+def test_model_content_empty_list():
+  with pytest.raises(ValueError):
+    types.ModelContent([])
+
+
+def test_model_content_unsupported_type_in_list():
+  with pytest.raises(ValueError):
+    types.ModelContent(['hi', 123])
+
+
+def test_user_content_unsupported_type():
+  with pytest.raises(ValueError):
+    types.UserContent(123)
+
+
+def test_user_content_empty_list():
+  with pytest.raises(ValueError):
+    types.UserContent([])
+
+
+def test_user_content_unsupported_type_in_list():
+  with pytest.raises(ValueError):
+    types.UserContent(['hi', 123])
