@@ -101,7 +101,7 @@ The `client.models` modules exposes model inferencing and model getters.
 
 ```python
 response = client.models.generate_content(
-    model='gemini-2.0-flash-exp', contents='why is the sky blue?'
+    model='gemini-2.0-flash-001', contents='why is the sky blue?'
 )
 print(response.text)
 ```
@@ -118,7 +118,7 @@ python code.
 ```python
 file = client.files.upload(path='a11.txt')
 response = client.models.generate_content(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents=['Could you summarize this file?', file]
 )
 print(response.text)
@@ -128,7 +128,7 @@ print(response.text)
 
 ```python
 response = client.models.generate_content(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents='high',
     config=types.GenerateContentConfig(
         system_instruction='I say high, you say low',
@@ -145,7 +145,7 @@ dictionaries. You can get the type from `google.genai.types`.
 
 ```python
 response = client.models.generate_content(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents=types.Part.from_text(text='Why is the sky blue?'),
     config=types.GenerateContentConfig(
         temperature=0,
@@ -199,7 +199,7 @@ print(async_pager[0])
 
 ```python
 response = client.models.generate_content(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents='Say something bad.',
     config=types.GenerateContentConfig(
         safety_settings=[
@@ -231,7 +231,7 @@ def get_current_weather(location: str) -> str:
 
 
 response = client.models.generate_content(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents='What is the weather like in Boston?',
     config=types.GenerateContentConfig(tools=[get_current_weather]),
 )
@@ -266,7 +266,7 @@ function = types.FunctionDeclaration(
 tool = types.Tool(function_declarations=[function])
 
 response = client.models.generate_content(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents='What is the weather like in Boston?',
     config=types.GenerateContentConfig(tools=[tool]),
 )
@@ -285,6 +285,7 @@ user_prompt_content = types.Content(
     parts=[types.Part.from_text(text='What is the weather like in Boston?')],
 )
 function_call_part = response.function_calls[0]
+function_call_content = response.candidates[0].content
 
 
 try:
@@ -299,7 +300,7 @@ except (
 
 
 function_response_part = types.Part.from_function_response(
-    name=function_call_part.function_call.name,
+    name=function_call_part.name,
     response=function_response,
 )
 function_response_content = types.Content(
@@ -307,7 +308,7 @@ function_response_content = types.Content(
 )
 
 response = client.models.generate_content(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents=[
         user_prompt_content,
         function_call_content,
@@ -340,7 +341,7 @@ def get_current_weather(location: str) -> str:
     return "sunny"
 
 response = client.models.generate_content(
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash-001",
     contents="What is the weather like in Boston?",
     config=types.GenerateContentConfig(
         tools=[get_current_weather],
@@ -368,7 +369,7 @@ def get_current_weather(location: str) -> str:
     return "sunny"
 
 response = client.models.generate_content(
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash-001",
     contents="What is the weather like in Boston?",
     config=types.GenerateContentConfig(
         tools=[get_current_weather],
@@ -402,7 +403,7 @@ class CountryInfo(BaseModel):
 
 
 response = client.models.generate_content(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents='Give me information for the United States.',
     config=types.GenerateContentConfig(
         response_mime_type='application/json',
@@ -414,7 +415,7 @@ print(response.text)
 
 ```python
 response = client.models.generate_content(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents='Give me information for the United States.',
     config=types.GenerateContentConfig(
         response_mime_type='application/json',
@@ -460,7 +461,7 @@ class InstrumentEnum(Enum):
   KEYBOARD = 'Keyboard'
 
 response = client.models.generate_content(
-      model='gemini-2.0-flash-exp',
+      model='gemini-2.0-flash-001',
       contents='What instrument plays multiple notes at once?',
       config={
           'response_mime_type': 'text/x.enum',
@@ -485,7 +486,7 @@ class InstrumentEnum(Enum):
   KEYBOARD = 'Keyboard'
 
 response = client.models.generate_content(
-      model='gemini-2.0-flash-exp',
+      model='gemini-2.0-flash-001',
       contents='What instrument plays multiple notes at once?',
       config={
           'response_mime_type': 'application/json',
@@ -501,7 +502,7 @@ print(response.text)
 
 ```python
 for chunk in client.models.generate_content_stream(
-    model='gemini-2.0-flash-exp', contents='Tell me a story in 300 words.'
+    model='gemini-2.0-flash-001', contents='Tell me a story in 300 words.'
 ):
     print(chunk.text, end='')
 ```
@@ -513,7 +514,7 @@ you can use the `from_uri` class method to create a `Part` object.
 
 ```python
 for chunk in client.models.generate_content_stream(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents=[
         'What is this image about?',
         types.Part.from_uri(
@@ -535,7 +536,7 @@ with open(YOUR_IMAGE_PATH, 'rb') as f:
     image_bytes = f.read()
 
 for chunk in client.models.generate_content_stream(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents=[
         'What is this image about?',
         types.Part.from_bytes(data=image_bytes, mime_type=YOUR_IMAGE_MIME_TYPE),
@@ -554,7 +555,7 @@ of `client.models.generate_content`
 
 ```python
 response = await client.aio.models.generate_content(
-    model='gemini-2.0-flash-exp', contents='Tell me a story in 300 words.'
+    model='gemini-2.0-flash-001', contents='Tell me a story in 300 words.'
 )
 
 print(response.text)
@@ -564,7 +565,7 @@ print(response.text)
 
 ```python
 async for chunk in await client.aio.models.generate_content_stream(
-    model='gemini-2.0-flash-exp', contents='Tell me a story in 300 words.'
+    model='gemini-2.0-flash-001', contents='Tell me a story in 300 words.'
 ):
     print(chunk.text, end='')
 ```
@@ -573,7 +574,7 @@ async for chunk in await client.aio.models.generate_content_stream(
 
 ```python
 response = client.models.count_tokens(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents='why is the sky blue?',
 )
 print(response)
@@ -585,7 +586,7 @@ Compute tokens is only supported in Vertex AI.
 
 ```python
 response = client.models.compute_tokens(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents='why is the sky blue?',
 )
 print(response)
@@ -595,7 +596,7 @@ print(response)
 
 ```python
 response = await client.aio.models.count_tokens(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash-001',
     contents='why is the sky blue?',
 )
 print(response)
@@ -707,7 +708,7 @@ Create a chat session to start a multi-turn conversations with the model.
 ### Send Message
 
 ```python
-chat = client.chats.create(model='gemini-2.0-flash-exp')
+chat = client.chats.create(model='gemini-2.0-flash-001')
 response = chat.send_message('tell me a story')
 print(response.text)
 ```
@@ -715,7 +716,7 @@ print(response.text)
 ### Streaming
 
 ```python
-chat = client.chats.create(model='gemini-2.0-flash-exp')
+chat = client.chats.create(model='gemini-2.0-flash-001')
 for chunk in chat.send_message_stream('tell me a story'):
     print(chunk.text)
 ```
@@ -723,7 +724,7 @@ for chunk in chat.send_message_stream('tell me a story'):
 ### Async
 
 ```python
-chat = client.aio.chats.create(model='gemini-2.0-flash-exp')
+chat = client.aio.chats.create(model='gemini-2.0-flash-001')
 response = await chat.send_message('tell me a story')
 print(response.text)
 ```
@@ -731,7 +732,7 @@ print(response.text)
 ### Async Streaming
 
 ```python
-chat = client.aio.chats.create(model='gemini-2.0-flash-exp')
+chat = client.aio.chats.create(model='gemini-2.0-flash-001')
 async for chunk in await chat.send_message_stream('tell me a story'):
     print(chunk.text)
 ```
